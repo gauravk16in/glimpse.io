@@ -11,21 +11,18 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
   const [loadingState, setLoadingState] = useState<LoadingState>({ isActive: true, isFading: false });
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const [isMobile, setIsMobile] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   
-  // Grid configuration - smaller on mobile
-  const CELL_SIZE = isMobile ? 80 : 120;
+  // Grid configuration
+  const CELL_SIZE = 120; // Large spacing as per image
   
   useEffect(() => {
     const updateDimensions = () => {
       if (containerRef.current) {
-        const width = window.innerWidth;
         setDimensions({
-          width: width,
+          width: window.innerWidth,
           height: window.innerHeight,
         });
-        setIsMobile(width < 768);
       }
     };
     
@@ -45,13 +42,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
     setMousePos({ x: e.clientX, y: e.clientY });
-  }, []);
-
-  // Handle touch for mobile
-  const handleTouchMove = useCallback((e: React.TouchEvent) => {
-    if (e.touches.length > 0) {
-      setMousePos({ x: e.touches[0].clientX, y: e.touches[0].clientY });
-    }
   }, []);
 
   const handleExit = () => {
@@ -95,7 +85,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       gridItems.push(
         <div
           key={`${x}-${y}`}
-          className="absolute flex items-center justify-center pointer-events-none transition-all duration-300 ease-out font-mono tracking-widest select-none"
+          className="absolute flex items-center justify-center pointer-events-none transition-all duration-300 ease-out font-mono text-xs tracking-widest select-none"
           style={{
             left: x * CELL_SIZE,
             top: y * CELL_SIZE,
@@ -104,7 +94,6 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
             color: 'white',
             opacity: opacity,
             transform: loadingState.isFading ? 'scale(0.8) translateY(-20px)' : 'scale(1)',
-            fontSize: isMobile ? '10px' : '12px',
           }}
         >
           {displayWord}
@@ -118,17 +107,15 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       ref={containerRef}
       onClick={handleExit}
       onMouseMove={handleMouseMove}
-      onTouchMove={handleTouchMove}
-      onTouchStart={handleTouchMove}
-      className={`fixed inset-0 z-50 overflow-hidden cursor-none bg-black transition-opacity duration-1000 ${loadingState.isFading ? 'opacity-0' : 'opacity-100'}`}
+      className={`fixed inset-0 z-50 overflow-hidden cursor-none bg-[#8b8b83] transition-opacity duration-1000 ${loadingState.isFading ? 'opacity-0' : 'opacity-100'}`}
     >
         <div className="absolute inset-0 pointer-events-none bg-radial-gradient from-transparent to-black/20 z-10" />
-        <div className="absolute inset-0" style={{ transform: isMobile ? 'translate(-30px, -30px)' : 'translate(-50px, -50px)' }}> 
+        <div className="absolute inset-0" style={{ transform: 'translate(-50px, -50px)' }}> 
             {gridItems}
         </div>
         
-        <div className="absolute bottom-6 md:bottom-10 w-full text-center text-white/40 font-mono text-[10px] tracking-[0.2em] uppercase">
-            {isMobile ? 'Tap to Skip' : 'Initialize'}
+        <div className="absolute bottom-10 w-full text-center text-white/40 font-mono text-[10px] tracking-[0.2em] uppercase">
+            Initialize
         </div>
     </div>
   );

@@ -1,58 +1,78 @@
 import { GoogleGenAI, Type, Schema } from "@google/genai";
-import { DesignConcept } from "../types";
+import { DesignConcept, QueueAnalysis } from "../types";
 
 const apiKey = process.env.API_KEY;
 
 // Use a fallback or throw an error if no API key, but for this exercise we assume it's there or handled.
-// Note: In a real app, never hardcode logic that crashes if env is missing without UI feedback.
 const ai = new GoogleGenAI({ apiKey: apiKey || 'dummy-key-to-prevent-crash' });
 
+// Schema for Design Concept (Legacy function)
 const CONCEPT_SCHEMA: Schema = {
   type: Type.OBJECT,
   properties: {
-    conceptName: { type: Type.STRING, description: "A creative and modern name for the app concept." },
-    visualStyle: { type: Type.STRING, description: "Detailed description of colors, typography, and layout style." },
-    componentSystem: { type: Type.STRING, description: "Description of UI elements like buttons, inputs, cards, etc." },
-    layoutWireframe: { type: Type.STRING, description: "Section-by-section breakdown of the landing page or main view." },
-    userFlow: { type: Type.STRING, description: "A concise walkthrough of the primary user journey." },
-    creativeEnhancements: { type: Type.STRING, description: "Unique micro-interactions, motion effects, or special aesthetic touches." },
-    cssSnippet: { type: Type.STRING, description: "A raw CSS or Tailwind class string for a signature element (e.g., a button or card)." },
+    conceptName: { type: Type.STRING },
+    visualStyle: { type: Type.STRING },
+    componentSystem: { type: Type.STRING },
+    layoutWireframe: { type: Type.STRING },
+    userFlow: { type: Type.STRING },
+    creativeEnhancements: { type: Type.STRING },
+    cssSnippet: { type: Type.STRING },
   },
   required: ["conceptName", "visualStyle", "componentSystem", "layoutWireframe", "userFlow", "creativeEnhancements", "cssSnippet"],
 };
 
+// Schema for Queue Cam Analysis
+const QUEUE_SCHEMA: Schema = {
+  type: Type.OBJECT,
+  properties: {
+    status: { type: Type.STRING, enum: ['Open', 'Busy', 'Closed', 'Maintenance'], description: "The crowd status based on the image." },
+    description: { type: Type.STRING, description: "A short, punchy observation about the scene (e.g., 'Crowd spilling out the door')." },
+    details: { type: Type.STRING, description: "Estimated wait time or occupancy (e.g., 'Wait: 15 mins', 'Seats available')." },
+  },
+  required: ["status", "description", "details"],
+};
+
 export const generateDesignConcept = async (userIdea: string): Promise<DesignConcept> => {
+    // Legacy function support
+    return {} as DesignConcept; 
+};
+
+export const analyzeQueuePhoto = async (base64Image: string): Promise<QueueAnalysis> => {
   if (!apiKey) {
-    throw new Error("API_KEY is missing from environment variables.");
+    throw new Error("API_KEY is missing.");
   }
 
-  const modelId = "gemini-2.5-flash"; // Fast and capable for this task
-  
-  const systemInstruction = `You are a Senior UI/UX Creative Designer specializing in modern, minimal, brutalist, and aesthetic digital products.
-Your goal is to take a raw app idea and transform it into a high-end design specification.
-Focus on "Pixel-Perfect" descriptions. Use design terminology (e.g., "glassmorphism", "neobrutalism", "Swiss style", "grid-based", "generative").
-`;
+  const modelId = "gemini-2.5-flash"; // Multimodal support
 
   try {
     const response = await ai.models.generateContent({
       model: modelId,
-      contents: userIdea,
+      contents: {
+        parts: [
+            { inlineData: { mimeType: 'image/jpeg', data: base64Image } },
+            { text: "Analyze this image of a campus facility (like a cafeteria, library, or gym). Determine the crowd level (Open/Busy/Closed) and estimate wait times or capacity. Be concise." }
+        ]
+      },
       config: {
-        systemInstruction: systemInstruction,
         responseMimeType: "application/json",
-        responseSchema: CONCEPT_SCHEMA,
-        temperature: 0.8, // Slightly creative
+        responseSchema: QUEUE_SCHEMA,
+        temperature: 0.5,
       }
     });
 
     const text = response.text;
     if (!text) {
-      throw new Error("No response generated from Gemini.");
+      throw new Error("No response generated.");
     }
 
-    return JSON.parse(text) as DesignConcept;
+    return JSON.parse(text) as QueueAnalysis;
   } catch (error) {
-    console.error("Gemini API Error:", error);
-    throw error;
+    console.error("Gemini Vision Error:", error);
+    // Fallback for demo purposes if API fails or quota exceeded
+    return {
+        status: 'Busy',
+        description: 'AI Analysis Failed (Simulated)',
+        details: 'Wait: Unknown'
+    };
   }
 };

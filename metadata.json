@@ -1,5 +1,7 @@
 {
   "name": "GlimpseIO",
   "description": "Real-time campus information system providing instant status updates for libraries, labs, and facilities.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [
+    "camera"
+  ]
 }
