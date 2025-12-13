@@ -107,7 +107,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       ref={containerRef}
       onClick={handleExit}
       onMouseMove={handleMouseMove}
-      className={`fixed inset-0 z-50 overflow-hidden cursor-none bg-[#8b8b83] transition-opacity duration-1000 ${loadingState.isFading ? 'opacity-0' : 'opacity-100'}`}
+      className={`fixed inset-0 z-50 overflow-hidden cursor-none bg-black transition-opacity duration-1000 ${loadingState.isFading ? 'opacity-0' : 'opacity-100'}`}
     >
         <div className="absolute inset-0 pointer-events-none bg-radial-gradient from-transparent to-black/20 z-10" />
         <div className="absolute inset-0" style={{ transform: 'translate(-50px, -50px)' }}> 

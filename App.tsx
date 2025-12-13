@@ -107,7 +107,7 @@ const INITIAL_LOCATIONS: LocationStatus[] = [
 const INITIAL_FACULTY: Professor[] = [
     {
         id: 'p1',
-        name: 'Dr. Anjali Sharma',
+        name: 'Dr. Uma Keshav ',
         department: 'Physics',
         status: 'Available',
         location: 'Cabin 304, Block A',
@@ -116,7 +116,7 @@ const INITIAL_FACULTY: Professor[] = [
     },
     {
         id: 'p2',
-        name: 'Prof. Robert Jenkins',
+        name: 'Prof. Danial',
         department: 'Computer Science',
         status: 'In Class',
         location: 'Lecture Hall 2',
@@ -125,12 +125,12 @@ const INITIAL_FACULTY: Professor[] = [
     },
     {
         id: 'p3',
-        name: 'Dr. Raj Malhotra',
-        department: 'Mathematics',
+        name: 'Dr. Sudhamani ',
+        department: 'Operating System',
         status: 'Busy',
         location: 'Staff Room',
         availabilityTime: '1:00 PM',
-        note: 'Meeting with Dean'
+        note: 'Meeting with HOD'
     },
     {
         id: 'p4',
@@ -143,8 +143,8 @@ const INITIAL_FACULTY: Professor[] = [
     },
     {
         id: 'p5',
-        name: 'Dr. Vikram Singh',
-        department: 'Mechanical Eng.',
+        name: 'Ms. Shyla',
+        department: 'JAVA',
         status: 'Out of Office',
         location: 'Not on Campus',
         availabilityTime: 'Tomorrow 9:00 AM',
@@ -152,8 +152,8 @@ const INITIAL_FACULTY: Professor[] = [
     },
     {
         id: 'p6',
-        name: 'Ms. Sarah Lee',
-        department: 'English Lit',
+        name: 'Ms. Sweta',
+        department: 'Mathematics',
         status: 'In Class',
         location: 'Room 105',
         availabilityTime: '11:30 AM',
